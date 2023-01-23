@@ -6,7 +6,7 @@
 #    By: vviovi <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/06 13:42:59 by vviovi            #+#    #+#              #
-#    Updated: 2023/01/06 13:48:09 by vviovi           ###   ########.fr        #
+#    Updated: 2023/01/23 15:09:43 by vviovi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,23 @@ INCLUDES = -I . -I libft
 
 LIBFTFLAGS = -L libft -lft
 
-SRC = 	main.c \
+SRC = 	mandatory/main.c \
+		mandatory/utils.c \
+		mandatory/init_arg.c \
+		mandatory/pipex_utils.c
+
+SRC_BONUS = 	bonus/main_bonus.c \
+				bonus/utils_bonus.c \
+				bonus/init_arg_bonus.c \
+				bonus/pipex_utils_bonus.c
+
+ifdef BONUS
+		SRC = $(SRC_BONUS)
+endif
 
 OBJ = ${SRC:.c=.o}
+
+OBJ_BONUS = ${SRC_BONUS:.c=.o}
 
 %.o : %.c
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -39,7 +53,7 @@ clean :
 	@echo "╔════════════════╗"
 	@echo "║ Cleaning pipex ║"
 	@echo "╚════════════════╝"
-	@rm -f $(OBJ)
+	@rm -f $(OBJ) $(OBJ_BONUS)
 
 fclean : clean
 	@$(MAKE) -C libft fclean
@@ -49,4 +63,10 @@ re : fclean all
 
 all : $(NAME)
 
-.PHONY: clean fclean re all
+bonus :
+	@echo "╔════════════════╗"
+	@echo "║  BONUS  pipex  ║"
+	@echo "╚════════════════╝"
+	@make BONUS=1
+
+.PHONY: clean fclean re all bonus
