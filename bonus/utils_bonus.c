@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 11:25:28 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/23 15:12:02 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/24 14:19:26 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	display_error_cmd(t_cmd *cmds, int index_cmd)
 {
 	char	*str_error;
 
-	str_error = ft_strjoin("command not found:", cmds[index_cmd].cmd[0]);
+	str_error = ft_strjoin("command not found: ", cmds[index_cmd].cmd[0]);
 	str_error = ft_strjoin_free_first_param(str_error, "\n");
 	write(2, str_error, ft_strlen(str_error));
 	free(str_error);

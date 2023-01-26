@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 09:09:07 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/23 15:11:35 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/24 13:06:52 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	get_path_cmd(t_cmd *cmd, char **env)
 	return (0);
 }
 
-t_cmd	*is_valid_cmd(int argc, char **argv, char **env)
+t_cmd	*is_valid_cmd(int argc, char **argv, char **env, int indexstart)
 {
 	t_cmd	*cmds;
 	int		nb;
@@ -108,7 +108,7 @@ t_cmd	*is_valid_cmd(int argc, char **argv, char **env)
 	cmds = malloc(sizeof(t_cmd) * (argc - 2));
 	if (cmds == NULL)
 		error_exit();
-	nb = 2;
+	nb = indexstart;
 	i = 0;
 	while (nb < argc - 1)
 	{

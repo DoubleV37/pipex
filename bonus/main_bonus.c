@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:42:32 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/23 15:11:33 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/24 15:48:26 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,9 @@ int	main(int argc, char **argv, char **env)
 		write(2, "Number of arguments incorrect !\n", 33);
 		return (1);
 	}
-	cmds = is_valid_cmd(argc, argv, env);
+	if (!ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])))
+		return (do_heredoc(argc, argv, env));
+	cmds = is_valid_cmd(argc, argv, env, 2);
 	if (!cmds || !is_valid_files(argv, argc, &fd[0], &fd[1]))
 	{
 		clean_cmds(&cmds);
