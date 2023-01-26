@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:42:48 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/26 08:50:32 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/26 13:47:52 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ typedef struct s_cmd
 void	clean_cmds(t_cmd **cmds);
 void	cleandbltab(char **tab);
 t_cmd	init_cmd(void);
-void	error_exit(void);
 void	display_error_cmd(t_cmd *cmds, int index_cmd);
+void	closefd(int *fd);
 
 //init_arg_bonus.c
 t_cmd	*is_valid_cmd(int argc, char **argv, char **env, int indexstart);
@@ -54,7 +54,7 @@ int		do_heredoc(int argc, char **argv, char **env);
 
 //main.c
 void	dupclose_fd(t_cmd *cmds, int index_cmd);
-pid_t	exe_cmd(t_cmd *cmds, int index_cmd, char **env);
+pid_t	exe_cmd(t_cmd *cmds, int index_cmd, char **env, int *fd);
 void	wait_child(t_cmd *cmds);
 char	*get_line(int fd);
 

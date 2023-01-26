@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 15:30:07 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/24 16:17:54 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/26 17:19:48 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@ char	*get_line(int fd)
 	return (res_str);
 }
 
+void	init_pipe(int *pipe_fd, int *pipe_fd2)
+{
+	pipe_fd[0] = -1;
+	pipe_fd[1] = -1;
+	pipe_fd2[0] = -1;
+	pipe_fd2[1] = -1;
+}
+
 void	pipexheredoc(t_cmd *cmds, int argc, int *fd, char **env)
 {
 	int	i;
@@ -37,6 +45,7 @@ void	pipexheredoc(t_cmd *cmds, int argc, int *fd, char **env)
 	int	pipe_fd2[2];
 
 	i = 0;
+	init_pipe(pipe_fd, pipe_fd2);
 	while (cmds[i].cmd)
 	{
 		if (i % 2 == 0)
@@ -51,9 +60,11 @@ void	pipexheredoc(t_cmd *cmds, int argc, int *fd, char **env)
 			pipex_end_even(cmds, i, pipe_fd2, fd);
 		else
 			pipex_even_odd(cmds, i, pipe_fd, pipe_fd2);
-		cmds[i].pid = exe_cmd(cmds, i, env);
+		cmds[i].pid = exe_cmd(cmds, i, env, fd);
 		i++;
 	}
+	closefd(pipe_fd);
+	closefd(pipe_fd2);
 }
 
 int	get_heredoc(char **argv, int *fd)
@@ -102,10 +113,7 @@ int	do_heredoc(int argc, char **argv, char **env)
 	cmds = is_valid_cmd(argc, argv, env, 3);
 	pipexheredoc(cmds, argc, fd, env);
 	wait_child(cmds);
-	if (fd[0] > 2)
-		close(fd[0]);
-	if (fd[1] > 2)
-		close(fd[1]);
+	closefd(fd);
 	clean_cmds(&cmds);
 	return (0);
 }

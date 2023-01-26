@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/10 11:25:28 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/24 14:19:26 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/26 11:04:00 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,27 @@ t_cmd	init_cmd(void)
 	return (cmd);
 }
 
-void	error_exit(void)
-{
-	perror(0);
-	exit(1);
-}
-
 void	display_error_cmd(t_cmd *cmds, int index_cmd)
 {
 	char	*str_error;
 
+	if (cmds[index_cmd].fd_in == -1 || cmds[index_cmd].fd_out == -1)
+		return ;
+	if (!cmds[index_cmd].cmd[0])
+	{
+		ft_putstr_fd("command not found: \n", 2);
+		return ;
+	}
 	str_error = ft_strjoin("command not found: ", cmds[index_cmd].cmd[0]);
 	str_error = ft_strjoin_free_first_param(str_error, "\n");
 	write(2, str_error, ft_strlen(str_error));
 	free(str_error);
+}
+
+void	closefd(int *fd)
+{
+	if (fd[0] > 2)
+		close(fd[0]);
+	if (fd[1] > 2)
+		close(fd[1]);
 }

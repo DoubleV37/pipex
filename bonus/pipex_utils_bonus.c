@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 11:33:38 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/23 15:11:54 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/26 12:34:57 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,13 @@ void	pipex_even_odd(t_cmd *cmds, int i, int *pipe_fd, int *pipe_fd2)
 		cmds[i].fd_in = pipe_fd2[0];
 		cmds[i].fd_out = pipe_fd[1];
 		cmds[i].to_close[0] = pipe_fd[0];
+		cmds[i].to_close[1] = pipe_fd2[1];
 	}
 	else
 	{
 		cmds[i].fd_in = pipe_fd[0];
 		cmds[i].fd_out = pipe_fd2[1];
 		cmds[i].to_close[0] = pipe_fd2[0];
+		cmds[i].to_close[1] = pipe_fd[1];
 	}
 }
