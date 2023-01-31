@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 11:33:38 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/31 14:53:46 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 16:41:01 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	clean_simple_quote(t_cmd cmd)
 	int	j;
 
 	nb = 1;
-	while (cmd.cmd[nb])
+	while (cmd.cmd && cmd.cmd[0] && cmd.cmd[nb])
 	{
 		i = 0;
 		while (cmd.cmd[nb][i])
