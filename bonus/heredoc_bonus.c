@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/24 15:30:07 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/26 17:19:48 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 10:46:17 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	init_pipe(int *pipe_fd, int *pipe_fd2)
 	pipe_fd2[1] = -1;
 }
 
-void	pipexheredoc(t_cmd *cmds, int argc, int *fd, char **env)
+void	pipexheredoc(t_cmd *cmds, int argc, char **env, char **argv)
 {
 	int	i;
 	int	pipe_fd[2];
@@ -48,19 +48,19 @@ void	pipexheredoc(t_cmd *cmds, int argc, int *fd, char **env)
 	init_pipe(pipe_fd, pipe_fd2);
 	while (cmds[i].cmd)
 	{
-		if (i % 2 == 0)
+		if (i % 2 == 0 && i != argc - 5)
 			pipe(pipe_fd);
-		else if (argc > 6 && i % 2 != 0)
+		else if (argc > 6 && i % 2 != 0 && i != argc - 5)
 			pipe(pipe_fd2);
 		if (i == 0)
-			pipex_start(cmds, i, pipe_fd, fd);
+			pipex_start_heredoc(cmds, i, pipe_fd, argv);
 		else if (i == argc - 5 && i % 2 != 0)
-			pipex_end_odd(cmds, i, pipe_fd, fd);
+			pipex_end_odd_heredoc(cmds, i, pipe_fd, argv);
 		else if (i == argc - 5 && i % 2 == 0)
-			pipex_end_even(cmds, i, pipe_fd2, fd);
+			pipex_end_even_heredoc(cmds, i, pipe_fd2, argv);
 		else
 			pipex_even_odd(cmds, i, pipe_fd, pipe_fd2);
-		cmds[i].pid = exe_cmd(cmds, i, env, fd);
+		cmds[i].pid = exe_cmd(cmds, i, env);
 		i++;
 	}
 	closefd(pipe_fd);
@@ -91,29 +91,17 @@ int	get_heredoc(char **argv, int *fd)
 	write(pipe_fd[1], buffer, ft_strlen(buffer));
 	close(pipe_fd[1]);
 	free(buffer);
-	fd[0] = pipe_fd[0];
+	*fd = pipe_fd[0];
 	return (1);
 }
 
 int	do_heredoc(int argc, char **argv, char **env)
 {
-	int		fd[2];
 	t_cmd	*cmds;
 
-	if (!get_heredoc(argv, fd))
-		return (0);
-	fd[1] = open(argv[argc - 1], O_RDWR | O_APPEND | O_CREAT, 0644);
-	if (open(argv[argc - 1], O_DIRECTORY) != -1)
-	{
-		if (fd[1] != -1)
-			close(fd[1]);
-		perror(0);
-		return (1);
-	}
 	cmds = is_valid_cmd(argc, argv, env, 3);
-	pipexheredoc(cmds, argc, fd, env);
+	pipexheredoc(cmds, argc, env, argv);
 	wait_child(cmds);
-	closefd(fd);
 	clean_cmds(&cmds);
 	return (0);
 }

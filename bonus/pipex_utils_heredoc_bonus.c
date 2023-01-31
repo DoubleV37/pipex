@@ -1,55 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils.c                                      :+:      :+:    :+:   */
+/*   pipex_utils_heredoc_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 11:33:38 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/31 14:53:46 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 14:31:52 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-void	pipex_start(t_cmd *cmds, int i, int *pipe_fd, int *fd)
+void	pipex_start_heredoc(t_cmd *cmds, int i, int *pipe_fd, char **argv)
 {
-	cmds[i].fd_in = fd[0];
+	get_heredoc(argv, &cmds[i].fd_in);
 	cmds[i].fd_out = pipe_fd[1];
 	cmds[i].to_close[0] = pipe_fd[0];
-	cmds[i].to_close[1] = fd[1];
 }
 
-void	pipex_end_even(t_cmd *cmds, int i, int *pipe_fd2, int *fd)
+void	pipex_end_even_heredoc(t_cmd *cmds, int i, int *pipe_fd2, char **argv)
 {
 	cmds[i].fd_in = pipe_fd2[0];
 	cmds[i].to_close[0] = pipe_fd2[1];
-	cmds[i].fd_out = fd[1];
-	cmds[i].to_close[1] = fd[0];
+	open_output_heredoc(argv, i + 5, &cmds[i].fd_out);
 }
 
-void	pipex_end_odd(t_cmd *cmds, int i, int *pipe_fd, int *fd)
+void	pipex_end_odd_heredoc(t_cmd *cmds, int i, int *pipe_fd, char **argv)
 {
 	cmds[i].fd_in = pipe_fd[0];
 	cmds[i].to_close[0] = pipe_fd[1];
-	cmds[i].fd_out = fd[1];
-	cmds[i].to_close[1] = fd[0];
+	open_output_heredoc(argv, i + 5, &cmds[i].fd_out);
 }
 
-void	pipex_even_odd(t_cmd *cmds, int i, int *pipe_fd, int *pipe_fd2)
+int	open_output_heredoc(char **argv, int argc, int *fd2)
 {
-	if (i % 2 == 0)
+	*fd2 = open(argv[argc - 1], O_RDWR | O_APPEND | O_CREAT, 0644);
+	if (*fd2 == -1 || open(argv[argc - 1], O_DIRECTORY) != -1)
 	{
-		cmds[i].fd_in = pipe_fd2[0];
-		cmds[i].fd_out = pipe_fd[1];
-		cmds[i].to_close[0] = pipe_fd[0];
+		perror(0);
+		return (0);
 	}
-	else
-	{
-		cmds[i].fd_in = pipe_fd[0];
-		cmds[i].fd_out = pipe_fd2[1];
-		cmds[i].to_close[0] = pipe_fd2[0];
-	}
+	return (1);
 }
 
 void	clean_simple_quote(t_cmd cmd)

@@ -6,34 +6,17 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 09:09:07 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/26 17:44:27 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 13:35:26 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-int	is_valid_files(char **argv, int argc, int *fd1, int *fd2)
+int	open_output(char **argv, int argc, int *fd2)
 {
-	int	tmp;
-
-	*fd1 = open(argv[1], O_RDONLY);
-	if (*fd1 != -1)
-	{
-		tmp = open(argv[1], O_DIRECTORY);
-		if (tmp != -1)
-		{
-			close(tmp);
-			close(*fd1);
-			*fd1 = -1;
-		}
-	}
-	if (*fd1 == -1)
-		perror(0);
 	*fd2 = open(argv[argc - 1], O_RDWR | O_TRUNC | O_CREAT, 0644);
 	if (*fd2 == -1 || open(argv[argc - 1], O_DIRECTORY) != -1)
 	{
-		if ((*fd1) != -1)
-			close(*fd1);
 		perror(0);
 		return (0);
 	}
@@ -99,14 +82,6 @@ int	get_path_cmd(t_cmd *cmd, char **env)
 	return (0);
 }
 
-void	clean_grep(t_cmd cmd)
-{
-	if (!ft_strncmp(cmd.cmd[0], "grep", ft_strlen(cmd.cmd[0])))
-	{
-		while ()
-	}
-}
-
 t_cmd	*is_valid_cmd(int argc, char **argv, char **env, int indexstart)
 {
 	t_cmd	*cmds;
@@ -125,6 +100,7 @@ t_cmd	*is_valid_cmd(int argc, char **argv, char **env, int indexstart)
 	{
 		cmds[i] = init_cmd();
 		cmds[i].cmd = ft_split(argv[nb], ' ');
+		clean_simple_quote(cmds[i]);
 		if (!get_path_cmd(&cmds[i], env) || cmds[i].cmd == NULL)
 			cmds[i].pid = -42;
 		nb++;

@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:42:48 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/23 14:42:43 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 14:54:25 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,6 @@ void	pipex_start(t_cmd *cmds, int i, int *pipe_fd, int *fd);
 void	pipex_end_even(t_cmd *cmds, int i, int *pipe_fd2, int *fd);
 void	pipex_end_odd(t_cmd *cmds, int i, int *pipe_fd, int *fd);
 void	pipex_even_odd(t_cmd *cmds, int i, int *pipe_fd, int *pipe_fd2);
+void	clean_simple_quote(t_cmd cmd);
 
 #endif

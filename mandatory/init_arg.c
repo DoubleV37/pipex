@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/18 09:09:07 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/23 14:56:59 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 15:00:42 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ t_cmd	*is_valid_cmd(int argc, char **argv, char **env)
 	{
 		cmds[i] = init_cmd();
 		cmds[i].cmd = ft_split(argv[nb], ' ');
+		clean_simple_quote(cmds[i]);
 		if (!get_path_cmd(&cmds[i], env) || cmds[i].cmd == NULL)
 			cmds[i].pid = -42;
 		nb++;

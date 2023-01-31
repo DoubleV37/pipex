@@ -6,34 +6,31 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/21 11:33:38 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/26 12:34:57 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 13:00:28 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-void	pipex_start(t_cmd *cmds, int i, int *pipe_fd, int *fd)
+void	pipex_start(t_cmd *cmds, int i, int *pipe_fd, char **argv)
 {
-	cmds[i].fd_in = fd[0];
+	open_input(argv, &cmds[i].fd_in);
 	cmds[i].fd_out = pipe_fd[1];
 	cmds[i].to_close[0] = pipe_fd[0];
-	cmds[i].to_close[1] = fd[1];
 }
 
-void	pipex_end_even(t_cmd *cmds, int i, int *pipe_fd2, int *fd)
+void	pipex_end_even(t_cmd *cmds, int i, int *pipe_fd2, char **argv)
 {
 	cmds[i].fd_in = pipe_fd2[0];
 	cmds[i].to_close[0] = pipe_fd2[1];
-	cmds[i].fd_out = fd[1];
-	cmds[i].to_close[1] = fd[0];
+	open_output(argv, i + 4, &cmds[i].fd_out);
 }
 
-void	pipex_end_odd(t_cmd *cmds, int i, int *pipe_fd, int *fd)
+void	pipex_end_odd(t_cmd *cmds, int i, int *pipe_fd, char **argv)
 {
 	cmds[i].fd_in = pipe_fd[0];
 	cmds[i].to_close[0] = pipe_fd[1];
-	cmds[i].fd_out = fd[1];
-	cmds[i].to_close[1] = fd[0];
+	open_output(argv, i + 4, &cmds[i].fd_out);
 }
 
 void	pipex_even_odd(t_cmd *cmds, int i, int *pipe_fd, int *pipe_fd2)
@@ -52,4 +49,24 @@ void	pipex_even_odd(t_cmd *cmds, int i, int *pipe_fd, int *pipe_fd2)
 		cmds[i].to_close[0] = pipe_fd2[0];
 		cmds[i].to_close[1] = pipe_fd[1];
 	}
+}
+
+int	open_input(char **argv, int *fd1)
+{
+	int	tmp;
+
+	*fd1 = open(argv[1], O_RDONLY);
+	if (*fd1 != -1)
+	{
+		tmp = open(argv[1], O_DIRECTORY);
+		if (tmp != -1)
+		{
+			close(tmp);
+			close(*fd1);
+			*fd1 = -1;
+		}
+	}
+	if (*fd1 == -1)
+		perror(0);
+	return (1);
 }

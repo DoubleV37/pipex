@@ -6,7 +6,7 @@
 /*   By: vviovi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/06 13:42:32 by vviovi            #+#    #+#             */
-/*   Updated: 2023/01/26 14:28:41 by vviovi           ###   ########.fr       */
+/*   Updated: 2023/01/31 09:27:02 by vviovi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	dupclose_fd(t_cmd *cmds, int index_cmd)
 		close(cmds[index_cmd].to_close[1]);
 }
 
-pid_t	exe_cmd(t_cmd *cmds, int index_cmd, char **env, int	*fd)
+pid_t	exe_cmd(t_cmd *cmds, int index_cmd, char **env)
 {
 	pid_t	pid;
 
@@ -47,7 +47,6 @@ pid_t	exe_cmd(t_cmd *cmds, int index_cmd, char **env, int	*fd)
 		else
 			display_error_cmd(cmds, index_cmd);
 		clean_cmds(&cmds);
-		closefd(fd);
 		exit(1);
 	}
 	if (cmds[index_cmd].cmd && cmds[index_cmd].fd_in > 2)
@@ -70,7 +69,7 @@ void	wait_child(t_cmd *cmds)
 	}
 }
 
-void	pipex(t_cmd *cmds, int argc, int *fd, char **env)
+void	pipex(t_cmd *cmds, int argc, char **env, char **argv)
 {
 	int	i;
 	int	pipe_fd[2];
@@ -79,19 +78,19 @@ void	pipex(t_cmd *cmds, int argc, int *fd, char **env)
 	i = 0;
 	while (cmds[i].cmd)
 	{
-		if (i % 2 == 0)
+		if (i % 2 == 0 && i != argc - 4)
 			pipe(pipe_fd);
-		else if (argc > 5 && i % 2 != 0)
+		else if (argc > 5 && i % 2 != 0 && i != argc - 4)
 			pipe(pipe_fd2);
 		if (i == 0)
-			pipex_start(cmds, i, pipe_fd, fd);
+			pipex_start(cmds, i, pipe_fd, argv);
 		else if (i == argc - 4 && i % 2 != 0)
-			pipex_end_odd(cmds, i, pipe_fd, fd);
+			pipex_end_odd(cmds, i, pipe_fd, argv);
 		else if (i == argc - 4 && i % 2 == 0)
-			pipex_end_even(cmds, i, pipe_fd2, fd);
+			pipex_end_even(cmds, i, pipe_fd2, argv);
 		else
 			pipex_even_odd(cmds, i, pipe_fd, pipe_fd2);
-		cmds[i].pid = exe_cmd(cmds, i, env, fd);
+		cmds[i].pid = exe_cmd(cmds, i, env);
 		i++;
 	}
 	closefd(pipe_fd);
@@ -99,7 +98,6 @@ void	pipex(t_cmd *cmds, int argc, int *fd, char **env)
 
 int	main(int argc, char **argv, char **env)
 {
-	int		fd[2];
 	int		is_heredoc;
 	t_cmd	*cmds;
 
@@ -112,15 +110,13 @@ int	main(int argc, char **argv, char **env)
 	if (!is_heredoc && ft_strlen(argv[1]) == ft_strlen("here_doc"))
 		return (do_heredoc(argc, argv, env));
 	cmds = is_valid_cmd(argc, argv, env, 2);
-	if (!cmds || !is_valid_files(argv, argc, &fd[0], &fd[1]))
+	if (!cmds)
 	{
-		closefd(fd);
 		clean_cmds(&cmds);
 		return (1);
 	}
-	pipex(cmds, argc, fd, env);
+	pipex(cmds, argc, env, argv);
 	wait_child(cmds);
-	closefd(fd);
 	clean_cmds(&cmds);
 	return (0);
 }

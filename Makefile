@@ -6,7 +6,7 @@
 #    By: vviovi <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/01/06 13:42:59 by vviovi            #+#    #+#              #
-#    Updated: 2023/01/24 15:43:58 by vviovi           ###   ########.fr        #
+#    Updated: 2023/01/31 12:55:51 by vviovi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ SRC_BONUS = 	bonus/main_bonus.c \
 				bonus/utils_bonus.c \
 				bonus/init_arg_bonus.c \
 				bonus/pipex_utils_bonus.c \
+				bonus/pipex_utils_heredoc_bonus.c \
 				bonus/heredoc_bonus.c
 
 ifdef BONUS
